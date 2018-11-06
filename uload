@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Credit: Aixxe @ aixxe.net
+
+csgo_pid=$(pidof csgo_linux64)
+if [ -z "$csgo_pid" ]; then
+    /bin/echo -e "\\e[91m[Error] CS:GO needs to be open before you can unload... You dummy!\\e[0m"
+    exit 1
+fi
+
+
+filename="libGladiatorcheatz_v21L.so"
+fullpath="$(pwd)/$filename"
+echo $fullpath
+
+if grep -q "$filename" "/proc/$csgo_pid/maps"; then
+echo "[Info] Unloading..."
+sudo gdb -n -q -batch-silent \
+	-ex "set logging on" \
+	-ex "set logging file /dev/null" \
+	-ex "set logging redirect on" \
+	-ex "attach $csgo_pid" \
+	-ex "set \$dlopen = (void*(*)(char*, int)) dlopen" \
+	-ex "set \$dlclose = (int(*)(void*)) dlclose" \
+	-ex "set \$library = \$dlopen(\"$filename\", 6)" \
+	-ex "call \$dlclose(\$library)" \
+	-ex "call \$dlclose(\$library)" \
+	-ex "detach" \
+	-ex "quit"
+/bin/echo -e "\\e[32m[Info] Successfully unloaded!\\e[0m"
+else
+/bin/echo -e "\\e[33m[Info] There is nothing to unload...\\e[0m"
+fi

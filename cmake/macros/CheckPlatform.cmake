@@ -1,0 +1,8 @@
+# check what platform we're on (64-bit or 32-bit)
+if(CMAKE_SIZEOF_VOID_P MATCHES 8)
+    set(PLATFORM 64)
+    message(STATUS "Detected 64-bit platform")
+else()
+    set(PLATFORM 32)
+    message(STATUS "Detected 32-bit platform")
+endif()

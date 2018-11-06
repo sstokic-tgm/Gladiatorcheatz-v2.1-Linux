@@ -1,0 +1,10 @@
+gdb.txt
+build/
+build/*
+cmake-build-debug/
+cmake-build-debug/*
+cmake-build-release/
+cmake-build-release/*
+vcs.xml
+_linux/
+_linux/*
