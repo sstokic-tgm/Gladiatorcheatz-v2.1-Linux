@@ -232,14 +232,14 @@ public:
 
     // Call this function when executing the command
     union {
-	FnCommandCallbackV1_t m_fnCommandCallbackV1;
-	FnCommandCallback_t m_fnCommandCallback;
-	ICommandCallback* m_pCommandCallback;
+        FnCommandCallbackV1_t m_fnCommandCallbackV1;
+        FnCommandCallback_t m_fnCommandCallback;
+        ICommandCallback* m_pCommandCallback;
     };
 
     union {
-	FnCommandCompletionCallback m_fnCompletionCallback;
-	ICommandCompletionCallback* m_pCommandCompletionCallback;
+        FnCommandCompletionCallback m_fnCompletionCallback;
+        ICommandCompletionCallback* m_pCommandCompletionCallback;
     };
 
     bool m_bHasCompletionCallback : 1;
@@ -319,10 +319,10 @@ public:
 
     struct CVValue_t
     {
-	char* m_pszString;
-	int m_StringLength;
-	float m_fValue;
-	int m_nValue;
+        char* m_pszString;
+        int m_StringLength;
+        float m_fValue;
+        int m_nValue;
     };
 
     FORCEINLINE_CVAR CVValue_t& GetRawValue()

@@ -42,8 +42,6 @@ typedef float RadianEuler[3];
 #define BONE_HAS_SAVEFRAME_ROT64        0x00400000    // Quaternion64
 #define BONE_HAS_SAVEFRAME_ROT32        0x00800000    // Quaternion32
 
-#define Assert( _exp ) ((void)0)
-
 #define HITGROUP_GENERIC 0
 #define HITGROUP_HEAD 1
 #define HITGROUP_CHEST 2
@@ -134,7 +132,7 @@ struct mstudiobbox_t
 	char *getHitboxName()
 	{
 		if (szhitboxnameindex == 0)
-			return "";
+			return ((char*)std::string("").c_str());
 
 		return ((char*)this) + szhitboxnameindex;
 	}

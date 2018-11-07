@@ -2,8 +2,6 @@
 
 #include "../math/Vector4D.h"
 
-#pragma region MASKS
-
 #define   DISPSURF_FLAG_SURFACE           (1<<0)
 #define   DISPSURF_FLAG_WALKABLE          (1<<1)
 #define   DISPSURF_FLAG_BUILDABLE         (1<<2)
@@ -97,7 +95,6 @@
 #define   MASK_SPLITAREAPORTAL          (CONTENTS_WATER|CONTENTS_SLIME)
 #define   MASK_CURRENT                  (CONTENTS_CURRENT_0|CONTENTS_CURRENT_90|CONTENTS_CURRENT_180|CONTENTS_CURRENT_270|CONTENTS_CURRENT_UP|CONTENTS_CURRENT_DOWN)
 #define   MASK_DEADSOLID                (CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_WINDOW|CONTENTS_GRATE)
-#pragma endregion
 
 class IHandleEntity;
 struct Ray_t;
@@ -155,7 +152,7 @@ public:
 	}
 
     void* pSkip;
-	char* ccIgnore = "";
+	char* ccIgnore = ((char*)std::string("").c_str());
 };
 
 class CTraceFilterSkipEntity : public ITraceFilter

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <assert.h>
+#include <string.h>
 #include <algorithm> //std::swap
 #include <mm_malloc.h>
 

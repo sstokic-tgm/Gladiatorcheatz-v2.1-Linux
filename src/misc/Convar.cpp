@@ -168,7 +168,7 @@ static bool s_bBuiltBreakSet = false;
 CCommand::CCommand() {
   if (!s_bBuiltBreakSet) {
     s_bBuiltBreakSet = true;
-    CharacterSetBuild(&s_BreakSet, "{}()':");
+    CharacterSetBuild(&s_BreakSet, (const uint8_t*)"{}()':");
   }
 
   Reset();
@@ -179,7 +179,7 @@ CCommand::CCommand(int nArgC, const char** ppArgV) {
 
   if (!s_bBuiltBreakSet) {
     s_bBuiltBreakSet = true;
-    CharacterSetBuild(&s_BreakSet, "{}()':");
+    CharacterSetBuild(&s_BreakSet, (const uint8_t*)"{}()':");
   }
 
   Reset();

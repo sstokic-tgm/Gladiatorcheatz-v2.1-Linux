@@ -4,6 +4,11 @@
 #include <cassert>
 #include <cstring>
 
+#ifndef WIN32
+#define __cdecl
+#define MEM_ALLOC_CREDIT_CLASS()
+#endif
+
 template <class T>
 inline T* Construct(T* pMemory)
 {
@@ -151,7 +156,7 @@ public:
     // Set the size by which it grows when it needs to allocate more memory.
     void SetGrowSize(int size) { m_Memory.SetGrowSize(size); }
     int NumAllocated() const; // Only use this if you really know what you're doing!
-    void Sort(int(__attribute__((__cdecl__))* pfnCompare)(const T*, const T*));
+    void Sort(int(__cdecl* pfnCompare)(const T*, const T*));
 
 protected:
     // Can't copy this unless we explicitly do it!
@@ -320,9 +325,9 @@ void CUtlVector<T, A>::GrowVector(int num)
 // Sorts the vector
 //-----------------------------------------------------------------------------
 template <typename T, class A>
-void CUtlVector<T, A>::Sort(int(__attribute__((__cdecl__))* pfnCompare)(const T*, const T*))
+void CUtlVector<T, A>::Sort(int(__attribute__((__cdecl))* pfnCompare)(const T*, const T*))
 {
-    typedef int(__attribute__((__cdecl__)) * QSortCompareFunc_t)(const void*, const void*);
+    typedef int(__attribute__((__cdecl)) * QSortCompareFunc_t)(const void*, const void*);
     if (Count() <= 1)
 	return;
 
@@ -820,7 +825,7 @@ public:
 	AddToTail(pNewStr);
     }
 
-    static int __attribute__((__cdecl__)) SortFunc(char* const* sz1, char* const* sz2)
+    static int __attribute__((__cdecl)) SortFunc(char* const* sz1, char* const* sz2)
     {
 	return strcmp(*sz1, *sz2);
     }

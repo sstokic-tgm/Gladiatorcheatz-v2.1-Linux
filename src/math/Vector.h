@@ -1,12 +1,10 @@
 #pragma once
 
 #include <cstdint>
+#include <cassert>
 #include <math.h>
 #include <limits>
 #include <stdlib.h>
-
-#define CHECK_VALID(_v) 0
-#define Assert(_exp) ((void)0)
 
 inline float sqrt2(float sqr)
 {
@@ -22,7 +20,7 @@ class Vector
 
 public:
 
-	__attribute__((always_inline)) Vector (void)
+	__attribute__((always_inline)) inline Vector (void)
     {
         Invalidate();
     }
@@ -46,25 +44,25 @@ public:
         x = ix; y = iy; z = iz;
     }
 
-	__attribute__((always_inline)) void Mul(float scalar)
+	__attribute__((always_inline)) inline void Mul(float scalar)
 	{
 		x *= scalar;
 		y *= scalar;
 		z *= scalar;
 	}
 
-	__attribute__((always_inline)) void MulAdd(const Vector& a, const Vector& b, float scalar) {
+	__attribute__((always_inline)) inline void MulAdd(const Vector& a, const Vector& b, float scalar) {
 		x = a.x + b.x * scalar;
 		y = a.y + b.y * scalar;
 		z = a.z + b.z * scalar;
 	}
 
-	__attribute__((always_inline)) bool IsValid() const
+	__attribute__((always_inline)) inline bool IsValid() const
     {
         return std::isfinite(x) && std::isfinite(y) && std::isfinite(z);
     }
 
-    void __attribute__((always_inline)) Invalidate()
+    void __attribute__((always_inline)) inline Invalidate()
     {
         x = y = z = std::numeric_limits<float>::infinity();
     }
@@ -79,12 +77,12 @@ public:
         return ((float*)this)[i];
     }
 
-	bool __attribute__((always_inline)) IsZero()
+	bool __attribute__((always_inline)) inline IsZero()
 	{
 		return (!x && !y && !z);
 	}
 
-    void __attribute__((always_inline)) Zero()
+    void __attribute__((always_inline)) inline Zero()
     {
         x = y = z = 0.0f;
     }
@@ -382,8 +380,8 @@ inline bool IsFinite(const float &f)
 
 inline void VectorMultiply(const Vector &a, float b, Vector &c)
 {
-	CHECK_VALID(a);
-	Assert(IsFinite(b));
+	assert(a);
+	assert(IsFinite(b));
 	c.x = a.x * b;
 	c.y = a.y * b;
 	c.z = a.z * b;
@@ -391,8 +389,8 @@ inline void VectorMultiply(const Vector &a, float b, Vector &c)
 
 inline void VectorMA(const Vector &start, float scale, const Vector &direction, Vector &dest)
 {
-	CHECK_VALID(start);
-	CHECK_VALID(direction);
+	assert(start);
+	assert(direction);
 
 	dest.x = start.x + scale * direction.x;
 	dest.y = start.y + scale * direction.y;
@@ -401,8 +399,8 @@ inline void VectorMA(const Vector &start, float scale, const Vector &direction, 
 
 inline void VectorAdd(const Vector &a, const Vector &b, Vector &c)
 {
-	CHECK_VALID(a);
-	CHECK_VALID(b);
+	assert(a);
+	assert(b);
 	c.x = a.x + b.x;
 	c.y = a.y + b.y;
 	c.z = a.z + b.z;
@@ -410,8 +408,8 @@ inline void VectorAdd(const Vector &a, const Vector &b, Vector &c)
 
 inline void VectorSubtract(const Vector &a, const Vector &b, Vector &c)
 {
-	CHECK_VALID(a);
-	CHECK_VALID(b);
+	assert(a);
+	assert(b);
 	c.x = a.x - b.x;
 	c.y = a.y - b.y;
 	c.z = a.z - b.z;

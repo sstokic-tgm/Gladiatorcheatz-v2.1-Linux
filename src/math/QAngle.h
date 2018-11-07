@@ -32,7 +32,7 @@ public:
         roll = iz;
     }
 
-	__attribute__((always_inline)) bool IsValid() const
+	__attribute__((always_inline)) inline bool IsValid() const
 	{
 		return std::isfinite(pitch) && std::isfinite(yaw) && std::isfinite(roll);
 	}
