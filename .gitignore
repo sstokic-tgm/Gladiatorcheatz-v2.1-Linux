@@ -8,3 +8,5 @@ cmake-build-release/*
 vcs.xml
 _linux/
 _linux/*
+.idea/
+.idea/*
