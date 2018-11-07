@@ -3,6 +3,7 @@
 #include "common.h"
 
 #include "misc/interface.h"
+#include "IfaceMngr.h"
 #include "misc/Enums.h"
 #include "vfunc.h"
 
