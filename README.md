@@ -1,3 +1,5 @@
+<p align="center"><img src="./gladz_logo.png" /></p>
+
 ## What is Gladiatorcheatz v2.1 Linux ?
 ---
 A continued **Linux** port of [Gladiatorcheatz v2.1](https://github.com/sstokic-tgm/Gladiatorcheatz-v2.1).
@@ -55,7 +57,7 @@ Alternatively:
 ```
 make -j$(nproc)
 ```
-After compiling, you will find your core binary in the build-directory. Now you can continue reading on and learn how how to update the source tree.
+After compiling, you will find your core binary in the build-directory. Now you can continue reading on and learn how to update the source tree.
 
 #### Keeping the code up to date
 To update the core files, do the following:
@@ -94,6 +96,7 @@ sudo ../uload
 ## Credits
 ---
 - Aimtux/Fuzion makers for load/unload script
+- aixxe for GetLibraryInformation
 - Others can be looked up here: [Gladiatorcheatz v2.1 + Loader](https://www.unknowncheats.me/forum/cs-go-releases/279588-gladiatorcheatz-v2-1-loader.html) or here [Gladiatorcheatz v2](https://www.unknowncheats.me/forum/cs-go-releases/253335-gladiatorcheatz-v2.html)
 
 _Credits may change with time..._
