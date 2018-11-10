@@ -190,7 +190,7 @@ CCommand::CCommand(int nArgC, const char** ppArgV) {
   for (int i = 0; i < nArgC; ++i) {
     m_ppArgv[i] = pBuf;
     int nLen = strlen(ppArgV[i]);
-    memcpy(pBuf, ppArgV[i], nLen + 1);
+    std::memcpy(pBuf, ppArgV[i], nLen + 1);
     if (i == 0) {
       m_nArgv0Size = nLen;
     }
@@ -200,7 +200,7 @@ CCommand::CCommand(int nArgC, const char** ppArgV) {
     if (bContainsSpace) {
       *pSBuf++ = '\"';
     }
-    memcpy(pSBuf, ppArgV[i], nLen);
+    std::memcpy(pSBuf, ppArgV[i], nLen);
     pSBuf += nLen;
     if (bContainsSpace) {
       *pSBuf++ = '\"';
@@ -402,8 +402,20 @@ void ConVar::InternalSetValue(const char* value) {
   char tempVal[32];
   char* val;
 
-  auto temp = *(uint32_t*)&m_Value.m_fValue ^ (uint32_t) this;
-  float flOldValue = *(float*)(&temp);
+  /*
+  // This is giving me a headache
+  auto temp = *(uint32_t*)&m_Value.m_fValue ^ (uint32_t)this;
+
+  float flOldValue = *(float*)(&xored);
+  */
+
+  // avoiding strict aliasing violation
+  uintptr_t xored{};
+  std::memcpy(&xored, &m_Value.m_fValue, sizeof(xored));
+  xored ^= reinterpret_cast<uintptr_t>(this);
+
+  float flOldValue;
+  std::memcpy(&flOldValue, &xored, sizeof(flOldValue));
 
   val = (char*)value;
   fNewValue = (float)atof(value);
@@ -413,9 +425,20 @@ void ConVar::InternalSetValue(const char* value) {
     val = tempVal;
   }
 
+  /*
+  // This is giving me a headache
   // Redetermine value
-  *(uint32_t*)&m_Value.m_fValue = *(uint32_t*)&fNewValue ^ (uint32_t) this;
-  *(uint32_t*)&m_Value.m_nValue = (uint32_t)fNewValue ^ (uint32_t) this;
+  *(uint32_t*)&m_Value.m_fValue = *(uint32_t*)&fNewValue ^ (uint32_t)this;
+  *(uint32_t*)&m_Value.m_nValue = (uint32_t)fNewValue ^ (uint32_t)this;
+  */
+
+   // avoiding strict aliasing violation
+   int *unsafe_ptr_fNewValue = reinterpret_cast<int*>(&fNewValue);
+   int *unsafe_ptr_fValue = reinterpret_cast<int*>(&m_Value.m_fValue);
+   *unsafe_ptr_fValue = (uintptr_t)unsafe_ptr_fNewValue ^ (uintptr_t)this;
+
+   int nValue = fNewValue;
+   m_Value.m_nValue = nValue ^ (uintptr_t)this;
 
   if (!(m_nFlags & FCVAR_NEVER_AS_STRING)) {
     ChangeStringValue(val, flOldValue);
@@ -424,7 +447,7 @@ void ConVar::InternalSetValue(const char* value) {
 
 void ConVar::ChangeStringValue(const char* tempVal, float flOldValue) {
   char* pszOldValue = (char*)stackalloc(m_Value.m_StringLength);
-  memcpy(pszOldValue, m_Value.m_pszString, m_Value.m_StringLength);
+  std::memcpy(pszOldValue, m_Value.m_pszString, m_Value.m_StringLength);
 
   int len = strlen(tempVal) + 1;
 
@@ -437,7 +460,7 @@ void ConVar::ChangeStringValue(const char* tempVal, float flOldValue) {
     m_Value.m_StringLength = std::to_string(this->GetFloat()).size() + 1;
   }
 
-  memcpy(m_Value.m_pszString, std::to_string(this->GetFloat()).c_str(), len);
+  std::memcpy(m_Value.m_pszString, std::to_string(this->GetFloat()).c_str(), len);
 
   // Invoke any necessary callback function
   for (int i = 0; i < m_fnChangeCallbacks.Count(); i++) {
@@ -466,10 +489,23 @@ void ConVar::InternalSetFloatValue(float fNewValue) {
 
   ClampValue(fNewValue);
 
+  /*
+  // This is giving me a headache
   // Redetermine value
   float flOldValue = m_Value.m_fValue;
   *(uint32_t*)&m_Value.m_fValue = *(uint32_t*)&fNewValue ^ (uint32_t) this;
   *(uint32_t*)&m_Value.m_nValue = (uint32_t)fNewValue ^ (uint32_t) this;
+  */
+
+  float flOldValue = m_Value.m_fValue;
+
+  // avoiding strict aliasing violation
+  int *unsafe_ptr_fNewValue = reinterpret_cast<int*>(&fNewValue);
+  int *unsafe_ptr_fValue = reinterpret_cast<int*>(&m_Value.m_fValue);
+  *unsafe_ptr_fValue = (uintptr_t)unsafe_ptr_fNewValue ^ (uintptr_t)this;
+
+  int nValue = fNewValue;
+  m_Value.m_nValue = nValue ^ (uintptr_t)this;
 
   if (!(m_nFlags & FCVAR_NEVER_AS_STRING)) {
     char tempVal[32];
@@ -481,17 +517,33 @@ void ConVar::InternalSetFloatValue(float fNewValue) {
 }
 
 void ConVar::InternalSetIntValue(int nValue) {
-  if (nValue == ((int)m_Value.m_nValue ^ (int)this)) return;
+  // This is giving me a headache
+  //if (nValue == ((int)m_Value.m_nValue ^ (int)this)) return;
+
+  // avoiding strict aliasing violation
+  if (nValue == (int)(m_Value.m_nValue ^ (uintptr_t)this)) return;
 
   float fValue = (float)nValue;
   if (ClampValue(fValue)) {
     nValue = (int)(fValue);
   }
 
+  /*
+  // This is giving me a headache
   // Redetermine value
   float flOldValue = m_Value.m_fValue;
   *(uint32_t*)&m_Value.m_fValue = *(uint32_t*)&fValue ^ (uint32_t) this;
   *(uint32_t*)&m_Value.m_nValue = *(uint32_t*)&nValue ^ (uint32_t) this;
+  */
+
+  float flOldValue = m_Value.m_fValue;
+
+  // avoiding strict aliasing violation
+  int *unsafe_ptr_fNewValue = reinterpret_cast<int*>(&fValue);
+  int *unsafe_ptr_fValue = reinterpret_cast<int*>(&m_Value.m_fValue);
+  *unsafe_ptr_fValue = (uintptr_t)unsafe_ptr_fNewValue ^ (uintptr_t)this;
+
+  m_Value.m_nValue = nValue ^ (uintptr_t)this;
 
   if (!(m_nFlags & FCVAR_NEVER_AS_STRING)) {
     char tempVal[32];
@@ -521,7 +573,7 @@ void ConVar::Create(const char* pName, const char* pDefaultValue,
 
   m_Value.m_StringLength = strlen(m_pszDefaultValue) + 1;
   m_Value.m_pszString = new char[m_Value.m_StringLength];
-  memcpy(m_Value.m_pszString, m_pszDefaultValue, m_Value.m_StringLength);
+  std::memcpy(m_Value.m_pszString, m_pszDefaultValue, m_Value.m_StringLength);
 
   m_bHasMin = bMin;
   m_fMinVal = fMin;
@@ -532,8 +584,19 @@ void ConVar::Create(const char* pName, const char* pDefaultValue,
 
   float value = (float)atof(m_Value.m_pszString);
 
+  /*
+  // This is giving me a headache
   *(uint32_t*)&m_Value.m_fValue = *(uint32_t*)&value ^ (uint32_t) this;
   *(uint32_t*)&m_Value.m_nValue = *(uint32_t*)&value ^ (uint32_t) this;
+  */
+
+  // avoiding strict aliasing violation
+  int *unsafe_ptr_fNewValue = reinterpret_cast<int*>(&value);
+  int *unsafe_ptr_fValue = reinterpret_cast<int*>(&m_Value.m_fValue);
+  *unsafe_ptr_fValue = (uintptr_t)unsafe_ptr_fNewValue ^ (uintptr_t)this;
+
+  int nValue = value;
+  m_Value.m_nValue = nValue ^ (uintptr_t)this;
 
   BaseClass::Create(pName, pHelpString, flags);
 }

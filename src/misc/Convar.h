@@ -7,6 +7,7 @@
 #include "UtlVector.h"
 
 #include <cstdint>
+#include <cassert>
 
 #define FORCEINLINE_CVAR inline
 //-----------------------------------------------------------------------------
@@ -366,8 +367,21 @@ public:
 //-----------------------------------------------------------------------------
 FORCEINLINE_CVAR float ConVar::GetFloat(void) const
 {
+    /*
+    // This is giving me a headache
     uint32_t xored = *(uint32_t*)&m_pParent->m_Value.m_fValue ^ (uint32_t)this;
     return *(float*)&xored;
+    */
+
+    // avoiding strict aliasing violation
+    static_assert(sizeof(float) <= sizeof(uintptr_t), "size problem");
+    uintptr_t xored{};
+    std::memcpy(&xored, &m_pParent->m_Value.m_fValue, sizeof(xored));
+    xored ^= reinterpret_cast<uintptr_t>(this);
+
+    float ret;
+    std::memcpy(&ret, &xored, sizeof(ret));
+    return ret;
 }
 
 //-----------------------------------------------------------------------------
@@ -376,7 +390,13 @@ FORCEINLINE_CVAR float ConVar::GetFloat(void) const
 //-----------------------------------------------------------------------------
 FORCEINLINE_CVAR int ConVar::GetInt(void) const
 {
+    /*
+    // This is giving me a headache
     return (int)(m_pParent->m_Value.m_nValue ^ (int)this);
+    */
+
+    // avoiding strict aliasing violation
+    return (int)(m_pParent->m_Value.m_nValue ^ (uintptr_t)this);
 }
 
 //-----------------------------------------------------------------------------
