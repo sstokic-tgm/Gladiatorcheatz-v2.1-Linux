@@ -1,4 +1,4 @@
-<p align="center"><img src="./gladz_logo.png" /></p>
+<p align="center"><img src="./gladz_logo.png" width="140" heigth="140" /></p>
 
 ## What is Gladiatorcheatz v2.1 Linux ?
 ---
