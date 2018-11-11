@@ -79,3 +79,4 @@ extern uintptr_t				*g_InputInternal;
 extern IMemAlloc				*g_pMemAlloc;
 extern IViewRenderBeams			*g_RenderBeams;
 extern ILocalize                *g_Localize;
+extern C_BasePlayer             *g_LocalPlayer;

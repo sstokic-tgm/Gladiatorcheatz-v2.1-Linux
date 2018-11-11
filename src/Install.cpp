@@ -30,6 +30,12 @@ uintptr_t				*g_InputInternal = nullptr;
 IMemAlloc				*g_pMemAlloc = nullptr;
 IViewRenderBeams	    *g_RenderBeams = nullptr;
 ILocalize               *g_Localize = nullptr;
+C_BasePlayer            *g_LocalPlayer = nullptr;
+
+
+std::unique_ptr<ShadowVTManager> g_pVguiPanelHook = nullptr;
+
+PaintTraverse_t o_PaintTraverse = nullptr;
 
 void Installer::installGladiator()
 {
@@ -76,9 +82,17 @@ void Installer::installGladiator()
     // g_Input =
 
     NetMngr::Get().init();
+
+    g_pVguiPanelHook = std::make_unique<ShadowVTManager>();
+
+    g_pVguiPanelHook->Setup(g_VGuiPanel);
+
+    g_pVguiPanelHook->Hook(41, Hooks::PaintTraverse);
+
+    o_PaintTraverse = g_pVguiPanelHook->GetOriginal<PaintTraverse_t>(41);
 }
 
 void Installer::uninstallGladiator()
 {
-
+    g_pVguiPanelHook->RestoreTable();
 }
