@@ -10,5 +10,5 @@ extern PaintTraverse_t o_PaintTraverse;
 
 namespace Hooks
 {
-    void PaintTraverse(void* thisptr, void*, unsigned int panel, bool forceRepaint, bool allowForce);
+    void PaintTraverse(void* thisptr, unsigned int panel, bool forceRepaint, bool allowForce);
 }

@@ -87,9 +87,9 @@ void Installer::installGladiator()
 
     g_pVguiPanelHook->Setup(g_VGuiPanel);
 
-    g_pVguiPanelHook->Hook(41, Hooks::PaintTraverse);
+    g_pVguiPanelHook->Hook(42, Hooks::PaintTraverse);
 
-    o_PaintTraverse = g_pVguiPanelHook->GetOriginal<PaintTraverse_t>(41);
+    o_PaintTraverse = g_pVguiPanelHook->GetOriginal<PaintTraverse_t>(42);
 }
 
 void Installer::uninstallGladiator()
