@@ -7,6 +7,9 @@ project(Gladiatorcheatz_v2.1L)
 # set macro-directory
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/macros)
 
+# set default buildoptions for git to false
+option(WITHOUT_GIT "Disable the GIT testing routines" 0)
+
 # check build-directory and platform
 include(CheckBuildDir)
 include(CheckPlatform)
