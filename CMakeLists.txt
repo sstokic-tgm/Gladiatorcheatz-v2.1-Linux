@@ -36,5 +36,27 @@ endif(NOT CMAKE_BUILD_TYPE)
 # Read all files
 file(GLOB_RECURSE SOURCE_FILES "${CMAKE_SOURCE_DIR}/src/*.cpp")
 
+if(NOT WITHOUT_GIT)
+    find_package(Git)
+endif()
+
+# Find revision ID and hash of the sourcetree
+include(cmake/genrev.cmake)
+
+# print out the results before continuing
+include(cmake/showoptions.cmake)
+
 # Build library
 add_library(Gladiatorcheatz_v21L SHARED ${SOURCE_FILES})
+
+# Set build-directive (used in core to tell which buildtype we used)
+target_compile_definitions(Gladiatorcheatz_v21L PRIVATE -D_BUILD_DIRECTIVE="${CMAKE_BUILD_TYPE}")
+
+# include the output directory, where the revision_data.h file is generated
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+# a custom target that is always built
+add_custom_target(revheader ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/revision_data.h)
+
+# explicitly say that the executable depends on the revheader
+add_dependencies(Gladiatorcheatz_v21L revheader)
