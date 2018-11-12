@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SDK.h"
+#include "Structs.h"
 #include "helpers/VMTManager.h"
 
 

@@ -12,6 +12,8 @@
 #include "math/Vector.h"
 #include "misc/Studio.h"
 
+#include "misc/BoneAccessor.h"
+
 #include "misc/client_class.h"
 #include "interfaces/IAppSystem.h"
 #include "interfaces/cdll_int.h"
@@ -49,6 +51,18 @@
 #include "misc/EHandle.h"
 
 #include "NetMngr.h"
+
+namespace Offsets
+{
+    extern uintptr_t invalidateBoneCache;
+    extern uintptr_t smokeCount;
+    extern uintptr_t playerResource;
+    extern uintptr_t bOverridePostProcessingDisable;
+    extern uintptr_t getSequenceActivity;
+    extern uintptr_t lgtSmoke;
+    extern uintptr_t dwCCSPlayerRenderablevftable;
+    extern uintptr_t reevauluate_anim_lod;
+}
 
 extern IVEngineClient			*g_EngineClient;
 extern IBaseClientDLL			*g_CHLClient;
