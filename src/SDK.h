@@ -64,6 +64,25 @@ namespace Offsets
     extern uintptr_t reevauluate_anim_lod;
 }
 
+namespace Global
+{
+    extern float smt;
+    extern QAngle visualAngles;
+    extern bool	bSendPacket;
+    extern bool bAimbotting;
+    extern bool bVisualAimbotting;
+    extern QAngle vecVisualAimbotAngs;
+    extern CUserCmd *userCMD;
+
+    extern bool bFakelag;
+    extern float flFakewalked;
+    extern Vector vecUnpredictedVel;
+
+    extern matrix3x4_t traceHitboxbones[128];
+
+    extern std::array<std::string, 64> resolverModes;
+}
+
 extern IVEngineClient			*g_EngineClient;
 extern IBaseClientDLL			*g_CHLClient;
 extern IClientEntityList		*g_EntityList;

@@ -45,8 +45,10 @@ namespace Offsets
 }
 
 std::unique_ptr<ShadowVTManager> g_pVguiPanelHook = nullptr;
+std::unique_ptr<ShadowVTManager> g_pClientModeHook = nullptr;
 
 PaintTraverse_t o_PaintTraverse = nullptr;
+CreateMove_t o_CreateMove = nullptr;
 
 void Installer::installGladiator()
 {
@@ -95,15 +97,20 @@ void Installer::installGladiator()
     NetMngr::Get().init();
 
     g_pVguiPanelHook = std::make_unique<ShadowVTManager>();
+    //g_pClientModeHook = std::make_unique<ShadowVTManager>();
 
     g_pVguiPanelHook->Setup(g_VGuiPanel);
+    //g_pClientModeHook->Setup(g_ClientMode);
 
     g_pVguiPanelHook->Hook(42, Hooks::PaintTraverse);
+    //g_pClientModeHook->Hook(25, Hooks::CreateMove);
 
     o_PaintTraverse = g_pVguiPanelHook->GetOriginal<PaintTraverse_t>(42);
+    //o_CreateMove = g_pClientModeHook->GetOriginal<CreateMove_t >(25);
 }
 
 void Installer::uninstallGladiator()
 {
     g_pVguiPanelHook->RestoreTable();
+    //g_pClientModeHook->RestoreTable();
 }
