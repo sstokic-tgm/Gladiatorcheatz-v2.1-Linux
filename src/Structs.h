@@ -69,18 +69,40 @@ class WeapInfo_t
 {
 public:
 
-    char pad00[0xC8];
-    __int32_t weapon_type;
-    char padCC[0x20];
-    __int32_t m_iDamage;
-    float m_fArmorRatio;
-    char padF4[0x4];
-    float m_fPenetration;
-    char padFC[0x8];
-    float m_fRange;
-    float m_fRangeModifier;
-    char pad10C[0x10];
-    bool m_bHasSilencer;
+    int weapon_type()
+    {
+        return *reinterpret_cast<int*>(reinterpret_cast<uintptr_t>(this) + 0x140);
+    }
+
+    int m_iDamage()
+	{
+		return *reinterpret_cast<int*>(reinterpret_cast<uintptr_t>(this) + 0x16C);
+	}
+
+	float m_fArmorRatio()
+	{
+		return *reinterpret_cast<float*>(reinterpret_cast<uintptr_t>(this) + 0x170);
+	}
+
+	float m_fPenetration()
+	{
+		return *reinterpret_cast<float*>(reinterpret_cast<uintptr_t>(this) + 0x178);
+	}
+
+	float m_fRange()
+	{
+		return *reinterpret_cast<float*>(reinterpret_cast<uintptr_t>(this) + 0x184);
+	}
+
+	float m_fRangeModifier()
+	{
+		return *reinterpret_cast<float*>(reinterpret_cast<uintptr_t>(this) + 0x188);
+	}
+
+	bool m_bHasSilencer()
+	{
+		return *reinterpret_cast<bool*>(reinterpret_cast<uintptr_t>(this) + 0x19C);
+    }
 };
 
 class C_BaseEntity : public IClientEntity
@@ -272,7 +294,7 @@ public:
         return *(QAngle*)((unsigned int*)&m_angRotation() - 12); //unsigned int may should not be a pointer, but it has to, otherwise it would loose data...
     }
 
-    float_t m_flSpawnTime();
+    float_t m_fSpawnTime();
 
     std::array<float, 24> &m_flPoseParameter();
     QAngle &visuals_Angles();
@@ -292,14 +314,7 @@ public:
     static void ResetAnimationState(C_CSGOPlayerAnimState *state);
     void CreateAnimationState(C_CSGOPlayerAnimState *state);
 
-    CBoneAccessor *GetBoneAccessor();
-    CStudioHdr *GetModelPtr();
-    void StandardBlendingRules(CStudioHdr *hdr, Vector *pos, Quaternion *q, float_t curtime, int32_t boneMask);
-    void BuildTransformations(CStudioHdr *hdr, Vector *pos, Quaternion *q, const matrix3x4_t &cameraTransform, int32_t boneMask, unsigned char *computed);
-
-    bool HandleBoneSetup(int32_t boneMask, matrix3x4_t *boneOut, float_t curtime);
-
-    const Vector &WorldSpaceCenter();
+    const Vector WorldSpaceCenter();
     Vector GetEyePos();
     player_info_t GetPlayerInfo();
     std::string GetName(bool console_safe = false);
@@ -326,6 +341,7 @@ public:
     NETVAR(CHandle<C_BasePlayer>, m_hOwner, "CBaseViewModel", "m_hOwner");
 };
 
+// needs to be updated
 class AnimationLayer
 {
 public:
@@ -344,6 +360,7 @@ public:
     char  pad_0038[4]; //0x0034
 }; //Size: 0x0038
 
+// needs to be updated
 class C_CSGOPlayerAnimState
 {
 public:

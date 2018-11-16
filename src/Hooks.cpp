@@ -19,8 +19,6 @@ namespace Global
     float flFakewalked = 0.f;
     Vector vecUnpredictedVel = Vector(0, 0, 0);
 
-    matrix3x4_t traceHitboxbones[128];
-
     std::array<std::string, 64> resolverModes;
 }
 
@@ -44,7 +42,7 @@ void Hooks::PaintTraverse(void* thisptr, unsigned int panel, bool forceRepaint, 
 
     if (panel == FocusOverlayPanel)
     {
-        
+
     }
 }
 

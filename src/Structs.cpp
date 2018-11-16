@@ -8,12 +8,12 @@
 
 bool C_BaseEntity::IsPlayer()
 {
-    return vfunc<bool(*)(C_BaseEntity*)>(this, 152)(this); //check
+    return vfunc<bool(*)(C_BaseEntity*)>(this, 152)(this); // needs check?
 }
 
 bool C_BaseEntity::IsWeapon()
 {
-    return vfunc<bool(*)(C_BaseEntity*)>(this, 160)(this); //check
+    return vfunc<bool(*)(C_BaseEntity*)>(this, 160)(this); // needs check?
 }
 
 bool C_BaseEntity::IsPlantedC4()
@@ -28,13 +28,14 @@ bool C_BaseEntity::IsDefuseKit()
 
 unsigned int C_BaseEntity::PhysicsSolidMaskForEntity()
 {
-    return vfunc<unsigned int(*)(C_BaseEntity*)>(this, 148)(this); //check
+    return vfunc<unsigned int(*)(C_BaseEntity*)>(this, 148)(this); // needs check?
 }
 
 WeapInfo_t *C_BaseCombatWeapon::GetWeapInfo()
 {
-    if (!this || this == NULL)
-        return NULL;
+    // Well checking "if (this)" etc. is completely brain-damaged. If you wanna ask questions like "do I exist?" then we should practise philosophy not C++..
+    if (!this || this == nullptr)
+        return nullptr;
 
     typedef WeapInfo_t *( *o_getWeapInfo)(void*);
     return vfunc<o_getWeapInfo>(this, 512)(this);
@@ -63,13 +64,13 @@ bool C_BaseCombatWeapon::CanFire()
 
 bool C_BaseCombatWeapon::IsReloading()
 {
-    static auto inReload = *(uint32_t*)(Utils::PatternScan("./csgo/bin/linux64/client_panorama_client.so", "C6 87 ? ? ? ? ? 8B 06 8B CE FF 90") + 2); //TODO: check if this sig is outdated...
+    static auto inReload = *(uint32_t*)(Utils::PatternScan((char*)"./csgo/bin/linux64/client_panorama_client.so", "C6 87 ? ? ? ? ? 8B 06 8B CE FF 90") + 2); //TODO: check if this sig is outdated...
     return *(bool*)((uintptr_t)this + inReload);
 }
 
 bool C_BaseCombatWeapon::IsRifle()
 {
-    switch (GetWeapInfo()->weapon_type)
+    switch (GetWeapInfo()->weapon_type())
     {
         case WEAPONTYPE_RIFLE:
             return true;
@@ -86,7 +87,7 @@ bool C_BaseCombatWeapon::IsRifle()
 
 bool C_BaseCombatWeapon::IsPistol()
 {
-    switch (GetWeapInfo()->weapon_type)
+    switch (GetWeapInfo()->weapon_type())
     {
         case WEAPONTYPE_PISTOL:
             return true;
@@ -97,7 +98,7 @@ bool C_BaseCombatWeapon::IsPistol()
 
 bool C_BaseCombatWeapon::IsSniper()
 {
-    switch (GetWeapInfo()->weapon_type)
+    switch (GetWeapInfo()->weapon_type())
     {
         case WEAPONTYPE_SNIPER_RIFLE:
             return true;
@@ -108,7 +109,7 @@ bool C_BaseCombatWeapon::IsSniper()
 
 bool C_BaseCombatWeapon::IsGrenade()
 {
-    switch (GetWeapInfo()->weapon_type)
+    switch (GetWeapInfo()->weapon_type())
     {
         case WEAPONTYPE_GRENADE:
             return true;
@@ -154,8 +155,8 @@ bool C_BaseCombatWeapon::CanFirePostPone()
 
 char* C_BaseCombatWeapon::GetWeaponIcon() //Do we even need this?
 {
-    int id = this->m_iItemDefinitionIndex();
-   /* switch (id)
+    /*int id = this->m_iItemDefinitionIndex();
+    switch (id)
     {
         case WEAPON_DEAGLE:
             return "F";
@@ -247,25 +248,24 @@ char* C_BaseCombatWeapon::GetWeaponIcon() //Do we even need this?
         default:
             return "";
     }*/
+    return (char*)"";
 }
 
 bool C_BaseCombatWeapon::IsInThrow()
 {
-    //TODO: comment back in as soon as createmove/globals are added...
-
-    /*if (!m_bPinPulled() || (Global::userCMD->buttons & IN_ATTACK) || (Global::userCMD->buttons & IN_ATTACK2))
+    if (!m_bPinPulled() || (Global::userCMD->buttons & IN_ATTACK) || (Global::userCMD->buttons & IN_ATTACK2))
     {
         float throwTime = m_fThrowTime();
 
         if (throwTime > 0)
             return true;
-    }*/
+    }
     return false;
 }
 
-float_t C_BasePlayer::m_flSpawnTime()
+float_t C_BasePlayer::m_fSpawnTime()
 {
-    return *(float_t*)((uintptr_t)this + 0xA290);
+    return *(float_t*)((uintptr_t)this + 0xABB0);
 }
 
 std::array<float, 24> &C_BasePlayer::m_flPoseParameter()
@@ -293,27 +293,25 @@ void C_BasePlayer::SetPoseAngles(float_t yaw, float_t pitch)
 
 void C_BasePlayer::InvalidateBoneCache()
 {
-    unsigned long g_iModelBoneCounter = **(unsigned long**)(Offsets::invalidateBoneCache + 10);
-    *(unsigned int*)((uintptr_t)this + 0x2914) = 0xFF7FFFFF; // m_flLastBoneSetupTime = -FLT_MAX;
-    *(unsigned int*)((uintptr_t)this + 0x2680) = (g_iModelBoneCounter - 1); // m_iMostRecentModelBoneCounter = g_iModelBoneCounter - 1;
+    unsigned long g_iModelBoneCounter = **(unsigned long**)(Offsets::invalidateBoneCache + 14);
+    *(unsigned int*)((uintptr_t)this + 0x2F80) = 0xFF7FFFFF; // m_flLastBoneSetupTime = -FLT_MAX;
+    *(unsigned int*)((uintptr_t)this + 0x2C48) = (g_iModelBoneCounter - 1); // m_iMostRecentModelBoneCounter = g_iModelBoneCounter - 1;
 }
 
 int C_BasePlayer::GetNumAnimOverlays()
 {
-    return *(int*)((unsigned int*)this + 0x297C);
+    return *(int*)((unsigned int*)this + 0x3018);
 }
 
 AnimationLayer *C_BasePlayer::GetAnimOverlays()
 {
-    // to find offset: use 9/12/17 dll
-    // sig: 55 8B EC 51 53 8B 5D 08 33 C0
-    return *(AnimationLayer**)((uintptr_t)this + 0x2970);
+    return *(AnimationLayer**)((uintptr_t)this + 0x3008);
 }
 
 AnimationLayer *C_BasePlayer::GetAnimOverlay(int i)
 {
-    if (i < 15)
-        return &GetAnimOverlays()[i];
+    assert(i >= 0 && i < 15);
+    return &GetAnimOverlays()[i];
 }
 
 int C_BasePlayer::GetSequenceActivity(int sequence)
@@ -323,9 +321,7 @@ int C_BasePlayer::GetSequenceActivity(int sequence)
     if (!hdr)
         return -1;
 
-    // sig for stuidohdr_t version: 53 56 8B F1 8B DA 85 F6 74 55
-    // sig for C_BaseAnimating version: 55 8B EC 83 7D 08 FF 56 8B F1 74 3D
-    // c_csplayer vfunc 242, follow calls to find the function.
+    // sig for C_BaseAnimating version: 83 FE FF 74 6B 55 48 89 E5 53 48 89 FB 48 83 EC 18 48 8B BF ? ? ? ? 48 85
 
     static auto get_sequence_activity = reinterpret_cast<int(*)(void*, studiohdr_t*, int)>(Offsets::getSequenceActivity);
 
@@ -334,18 +330,19 @@ int C_BasePlayer::GetSequenceActivity(int sequence)
 
 C_CSGOPlayerAnimState *C_BasePlayer::GetPlayerAnimState()
 {
-    return (C_CSGOPlayerAnimState*)((uintptr_t)this + 0x38A0); //TODO: find out if it's the same as in windows, probably not
+    return (C_CSGOPlayerAnimState*)((uintptr_t)this + 0x4170);
 }
 
 void C_BasePlayer::UpdateAnimationState(C_CSGOPlayerAnimState *state, QAngle angle)
 {
-   /* if (!state)
+    if (!state)
         return;
 
-    static auto UpdateAnimState = Utils::PatternScan("./csgo/bin/linux64/client_panorama_client.so", "55 8B EC 83 E4 F8 83 EC 18 56 57 8B F9 F3 0F 11 54 24"); //TODO: check this sig..
+    static auto UpdateAnimState = Utils::PatternScan((char*)"./csgo/bin/linux64/client_panorama_client.so", "55 48 89 E5 41 56 41 55 41 54 53 48 89 FB 48 83 EC 20 F3");
     if (!UpdateAnimState)
         return;
 
+    /* needs fix, lazy atm
     __asm
     {
     mov ecx, state
@@ -363,7 +360,7 @@ void C_BasePlayer::ResetAnimationState(C_CSGOPlayerAnimState *state)
         return;
 
     using ResetAnimState_t = void(*)(C_CSGOPlayerAnimState*);
-    static auto ResetAnimState = (ResetAnimState_t)Utils::PatternScan("./csgo/bin/linux64/client_panorama_client.so", "56 6A 01 68 ? ? ? ? 8B F1"); //TODO: check this sig..
+    static auto ResetAnimState = (ResetAnimState_t)Utils::PatternScan((char*)"./csgo/bin/linux64/client_panorama_client.so", "55 48 8D 35 ? ? ? ? BA ? ? ? ? 48 89 E5 53 48 89 FB 48 83 EC 18 E8");
     if (!ResetAnimState)
         return;
 
@@ -373,96 +370,14 @@ void C_BasePlayer::ResetAnimationState(C_CSGOPlayerAnimState *state)
 void C_BasePlayer::CreateAnimationState(C_CSGOPlayerAnimState *state)
 {
     using CreateAnimState_t = void(*)(C_CSGOPlayerAnimState*, C_BasePlayer*);
-    static auto CreateAnimState = (CreateAnimState_t)Utils::PatternScan("./csgo/bin/linux64/client_panorama_client.so", "55 8B EC 56 8B F1 B9 ? ? ? ? C7 46"); //TODO: check this sig..
+    static auto CreateAnimState = (CreateAnimState_t)Utils::PatternScan((char*)"./csgo/bin/linux64/client_panorama_client.so", "55 48 8D 87 ? ? ? ? 48 8D 97 ? ? ? ? 48 89 E5");
     if (!CreateAnimState)
         return;
 
     CreateAnimState(state, this);
 }
 
-CBoneAccessor *C_BasePlayer::GetBoneAccessor()
-{
-    return (CBoneAccessor*)((uintptr_t)this + 0x2698);
-}
-
-CStudioHdr *C_BasePlayer::GetModelPtr()
-{
-    return *(CStudioHdr**)((uintptr_t)this + 0x293C);
-}
-
-void C_BasePlayer::StandardBlendingRules(CStudioHdr *hdr, Vector *pos, Quaternion *q, float_t curtime, int32_t boneMask)
-{
-    typedef void(*o_StandardBlendingRules)(void*, CStudioHdr*, Vector*, Quaternion*, float_t, int32_t);
-    vfunc<o_StandardBlendingRules>(this, 200)(this, hdr, pos, q, curtime, boneMask);
-}
-
-void C_BasePlayer::BuildTransformations(CStudioHdr *hdr, Vector *pos, Quaternion *q, const matrix3x4_t &cameraTransform, int32_t boneMask, uint8_t *computed)
-{
-    typedef void(*o_BuildTransformations)(void*, CStudioHdr*, Vector*, Quaternion*, const matrix3x4_t&, int32_t, uint8_t*);
-    vfunc<o_BuildTransformations>(this, 184)(this, hdr, pos, q, cameraTransform, boneMask, computed);
-}
-
-bool C_BasePlayer::HandleBoneSetup(int32_t boneMask, matrix3x4_t *boneOut, float_t curtime) //TODO: comment this back in as soon as anims are added..
-{
-    /*CStudioHdr *hdr = this->GetModelPtr();
-    if (!hdr)
-        return false;
-
-    CBoneAccessor *accessor = this->GetBoneAccessor();
-    if (!accessor)
-        return false;
-
-    matrix3x4_t *backup_matrix = accessor->GetBoneArrayForWrite();
-    if (!backup_matrix)
-        return false;
-
-    Vector origin = this->m_vecOrigin();
-    QAngle angles = this->m_angEyeAngles();
-
-    Vector backup_origin = this->GetAbsOrigin();
-    QAngle backup_angles = this->GetAbsAngles();
-
-    std::array<float_t, 24> backup_poses;
-    backup_poses = this->m_flPoseParameter();
-
-    AnimationLayer backup_layers[15];
-    std::memcpy(backup_layers, this->GetAnimOverlays(), (sizeof(AnimationLayer) * this->GetNumAnimOverlays()));
-
-    alignas(16) matrix3x4_t parentTransform;
-    Math::AngleMatrix(angles, origin, parentTransform);
-
-    auto &anim_data = Animation::Get().GetPlayerAnimationInfo(this->EntIndex());
-
-    this->SetAbsOrigin(origin);
-    this->SetAbsAngles(angles);
-    this->m_flPoseParameter() = anim_data.m_flPoseParameters;
-    std::memcpy(this->GetAnimOverlays(), anim_data.m_AnimationLayer, (sizeof(AnimationLayer) * this->GetNumAnimOverlays()));
-
-    Vector *pos = (Vector*)(g_pMemAlloc->Alloc(sizeof(Vector[128])));
-    Quaternion *q = (Quaternion*)(g_pMemAlloc->Alloc(sizeof(Quaternion[128])));
-    std::memset(pos, 0xFF, sizeof(pos));
-    std::memset(q, 0xFF, sizeof(q));
-
-    this->StandardBlendingRules(hdr, pos, q, curtime, boneMask);
-
-    accessor->SetBoneArrayForWrite(boneOut);
-
-    uint8_t *computed = (uint8_t*)(g_pMemAlloc->Alloc(sizeof(uint8_t[0x20])));
-    std::memset(computed, 0, sizeof(uint8_t[0x20]));
-
-    this->BuildTransformations(hdr, pos, q, parentTransform, boneMask, &computed[0]);
-
-    accessor->SetBoneArrayForWrite(backup_matrix);
-
-    this->SetAbsOrigin(backup_origin);
-    this->SetAbsAngles(backup_angles);
-    this->m_flPoseParameter() = backup_poses;
-    std::memcpy(this->GetAnimOverlays(), backup_layers, (sizeof(AnimationLayer) * this->GetNumAnimOverlays()));
-*/
-    return true;
-}
-
-const Vector &C_BasePlayer::WorldSpaceCenter()
+const Vector C_BasePlayer::WorldSpaceCenter()
 {
     Vector vecOrigin = m_vecOrigin();
 
@@ -517,7 +432,7 @@ std::string C_BasePlayer::GetName(bool console_safe)
 
     char* pl_name = pinfo.szName;
     char buf[128];
-    int c = 0;
+    uint32_t c = 0;
 
     for (int i = 0; pl_name[i]; ++i)
     {
@@ -549,7 +464,7 @@ bool C_BasePlayer::HasC4()
 {
     static auto fnHasC4
             = reinterpret_cast<bool(*)(void*)>(
-                    Utils::PatternScan("./csgo/bin/linux64/client_panorama_client.so", "56 8B F1 85 F6 74 31") //TODO: check this sig..
+                    Utils::PatternScan((char*)"./csgo/bin/linux64/client_panorama_client.so", "55 48 89 E5 41 54 53 48 89 FB E8 ? ? ? ? 84 C0 75 3D")
             );
 
     return fnHasC4(this);
@@ -650,7 +565,7 @@ VarMapping_t *C_BasePlayer::VarMapping()
 void C_BasePlayer::SetAbsOrigin(const Vector &origin)
 {
     using SetAbsOriginFn = void(*)(void*, const Vector &origin);
-    static SetAbsOriginFn SetAbsOrigin = (SetAbsOriginFn)Utils::PatternScan("./csgo/bin/linux64/client_panorama_client.so", "55 8B EC 83 E4 F8 51 53 56 57 8B F1 E8"); //TODO: check this sig..
+    static SetAbsOriginFn SetAbsOrigin = (SetAbsOriginFn)Utils::PatternScan((char*)"./csgo/bin/linux64/client_panorama_client.so", "55 48 89 E5 41 55 41 54 49 89 F4 53 48 89 FB 48 83 EC 08 E8 ? ? ? ? F3");
 
     SetAbsOrigin(this, origin);
 }
@@ -658,7 +573,7 @@ void C_BasePlayer::SetAbsOrigin(const Vector &origin)
 void C_BasePlayer::SetAbsAngles(const QAngle &angles)
 {
     using SetAbsAnglesFn = void(*)(void*, const QAngle &angles);
-    static SetAbsAnglesFn SetAbsAngles = (SetAbsAnglesFn)Utils::PatternScan("./csgo/bin/linux64/client_panorama_client.so", "55 8B EC 83 E4 F8 83 EC 64 53 56 57 8B F1 E8"); //TODO: check this sig..
+    static SetAbsAnglesFn SetAbsAngles = (SetAbsAnglesFn)Utils::PatternScan((char*)"./csgo/bin/linux64/client_panorama_client.so", "55 48 89 E5 41 57 41 56 41 55 41 54 49 89 F4 53 48 89 FB 48 83 EC 68 E8 ? ? ? ? F3");
 
     SetAbsAngles(this, angles);
 }
@@ -666,7 +581,7 @@ void C_BasePlayer::SetAbsAngles(const QAngle &angles)
 void C_BasePlayer::UpdateClientSideAnimation()
 {
     typedef void(*o_updateClientSideAnimation)(void*);
-    vfunc<o_updateClientSideAnimation>(this, 218)(this);
+    vfunc<o_updateClientSideAnimation>(this, 218)(this); // needs check?
 }
 
 int C_BasePlayer::GetPing()

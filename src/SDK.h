@@ -46,42 +46,12 @@
 
 #include "misc/Convar.h"
 #include "misc/CUserCmd.h"
+#include "misc/globalvars_base.h"
 #include "misc/glow_outline_effect.h"
 #include "misc/datamap.h"
 #include "misc/EHandle.h"
 
 #include "NetMngr.h"
-
-namespace Offsets
-{
-    extern uintptr_t invalidateBoneCache;
-    extern uintptr_t smokeCount;
-    extern uintptr_t playerResource;
-    extern uintptr_t bOverridePostProcessingDisable;
-    extern uintptr_t getSequenceActivity;
-    extern uintptr_t lgtSmoke;
-    extern uintptr_t dwCCSPlayerRenderablevftable;
-    extern uintptr_t reevauluate_anim_lod;
-}
-
-namespace Global
-{
-    extern float smt;
-    extern QAngle visualAngles;
-    extern bool	bSendPacket;
-    extern bool bAimbotting;
-    extern bool bVisualAimbotting;
-    extern QAngle vecVisualAimbotAngs;
-    extern CUserCmd *userCMD;
-
-    extern bool bFakelag;
-    extern float flFakewalked;
-    extern Vector vecUnpredictedVel;
-
-    extern matrix3x4_t traceHitboxbones[128];
-
-    extern std::array<std::string, 64> resolverModes;
-}
 
 extern IVEngineClient			*g_EngineClient;
 extern IBaseClientDLL			*g_CHLClient;
@@ -113,3 +83,31 @@ extern IMemAlloc				*g_pMemAlloc;
 extern IViewRenderBeams			*g_RenderBeams;
 extern ILocalize                *g_Localize;
 extern C_BasePlayer             *g_LocalPlayer;
+
+namespace Offsets
+{
+    extern uintptr_t invalidateBoneCache;
+    extern uintptr_t smokeCount;
+    extern uintptr_t playerResource;
+    extern uintptr_t bOverridePostProcessingDisable;
+    extern uintptr_t getSequenceActivity;
+    extern uintptr_t lgtSmoke;
+    extern uintptr_t reevauluate_anim_lod;
+}
+
+namespace Global
+{
+    extern float smt;
+    extern QAngle visualAngles;
+    extern bool	bSendPacket;
+    extern bool bAimbotting;
+    extern bool bVisualAimbotting;
+    extern QAngle vecVisualAimbotAngs;
+    extern CUserCmd *userCMD;
+
+    extern bool bFakelag;
+    extern float flFakewalked;
+    extern Vector vecUnpredictedVel;
+
+    extern std::array<std::string, 64> resolverModes;
+}

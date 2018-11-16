@@ -3,7 +3,6 @@
 #include <cstdint>
 
 #include "../misc/interface.h"
-#include "../misc/globalvars_base.h"
 
 #include "../math/Vector.h"
 #include "../math/QAngle.h"

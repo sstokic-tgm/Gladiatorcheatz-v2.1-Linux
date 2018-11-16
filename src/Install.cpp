@@ -40,7 +40,6 @@ namespace Offsets
     uintptr_t bOverridePostProcessingDisable = 0x00;
     uintptr_t getSequenceActivity = 0x00;
     uintptr_t lgtSmoke = 0x00;
-    uintptr_t dwCCSPlayerRenderablevftable = 0x00;
     uintptr_t reevauluate_anim_lod = 0x00;
 }
 
